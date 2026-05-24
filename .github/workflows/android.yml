@@ -21,15 +21,24 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x family_app_v2/gradlew
+      run: |
+        if [ -f "family_app_v2/gradlew" ]; then
+          chmod +x family_app_v2/gradlew
+        elif [ -f "gradlew" ]; then
+          chmod +x gradlew
+        fi
 
     - name: Build with Gradle
       run: |
-        cd family_app_v2
+        if [ -d "family_app_v2" ]; then
+          cd family_app_v2
+        fi
         ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: my-family-app
-        path: family_app_v2/app/build/outputs/apk/debug/app-debug.apk
+        path: |
+          family_app_v2/app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/apk/debug/app-debug.apk
