@@ -1,0 +1,35 @@
+给下一位 GPT 的说明书
+
+请先阅读本文件，再基于这个压缩包里的源码继续优化，不要重写项目。
+
+项目简介：
+这是一个 Kotlin 原生 Android 项目，软件名是“家庭共享”。功能是：用户设置每天发送时间后，App 到点高精度获取手机位置，并推送到飞书机器人 Webhook。项目需要适配荣耀 / MagicOS 手机后台、自启动、精确闹钟、后台定位等限制。
+
+最重要原则：
+1. 只有“到点自动发送”和“手动点击立即发送一次”时，才允许访问定位。
+2. 打开 App、保存时间、切后台、开机恢复、系统误唤醒时，绝不能访问定位。
+3. 平时尽量省电；到点才启动定位；发送成功或失败后必须停止定位服务。
+4. 不要伪装成系统组件，不要偷偷打开手机定位总开关，不要绕过安卓权限。
+5. 飞书 Webhook 是单向推送，不能直接通过飞书消息控制手机 App，除非以后增加服务器控制通道。
+
+关键文件：
+- app/src/main/java/com/familylocation/MainActivity.kt：主界面、按钮、时间滑轮、权限自检。
+- app/src/main/java/com/familylocation/LocationService.kt：高精度定位、飞书推送、发送后停止。
+- app/src/main/java/com/familylocation/AlarmScheduler.kt：定时任务安排和清理旧闹钟。
+- app/src/main/java/com/familylocation/AlarmReceiver.kt：到点触发逻辑，必须限制非到点不定位。
+- app/src/main/java/com/familylocation/BootReceiver.kt：手机重启后恢复定时，但不能在这里定位。
+- app/src/main/java/com/familylocation/Prefs.kt：保存 Webhook、时间、开关、日志状态。
+- app/src/main/AndroidManifest.xml：权限、Receiver、Service 配置。
+- .github/workflows/build-apk.yml：GitHub Actions 云端打包 APK。
+
+后续优化优先级：
+1. 增加更清楚的运行日志：上次唤醒原因、是否访问定位、是否发送、失败原因、下次发送时间。
+2. 增强开机恢复提示：手机重启后，如果成功恢复定时，可发飞书提醒。
+3. 增加“定位关闭”提醒：到点发现手机定位总开关关闭时，发飞书说明原因。
+4. 继续优化 UI：深色模式下文字必须清楚，时间滑轮不能太暗。
+5. 如果用户有服务器，可升级为：App → 服务器 → 飞书，并实现远程 STOP / START / 改时间。
+
+GitHub 云端打包方法：
+把整个项目上传到 GitHub 仓库后，进入 Actions，等待绿色对勾。成功后优先在 apk-output 文件夹找 APK；如果没有，就在 Actions 成功任务底部的 Artifacts 下载 APK。
+
+请修改前先检查项目结构和上述关键文件，修改后说明你改了哪些文件、解决了什么问题。

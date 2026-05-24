@@ -1,0 +1,14 @@
+手机/网吧无 Android Studio 打包步骤：
+
+1. 登录 GitHub。
+2. 新建仓库，建议 Public。
+3. 上传本 zip 解压后的全部文件，或用 Codespaces 上传 zip 后解压。
+4. 进入 Actions。
+5. 运行 Build Android APK Final Pro。
+6. 绿色对勾表示成功。
+7. 优先回 Code 页面找 apk-output/FamilyShare-final-all-in-one.apk。
+8. 如果 Code 页面没有 apk-output，就进 Actions 成功任务底部找 Artifacts 下载 FamilyShare-final-all-in-one-apk，解压后得到 app-debug.apk。
+
+注意：
+- 如果保存到仓库失败，请到 Settings → Actions → General → Workflow permissions 选择 Read and write permissions。
+- 如果 Artifacts 下载失败，优先使用 apk-output 里的 APK。
