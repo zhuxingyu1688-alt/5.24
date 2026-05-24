@@ -19,24 +19,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Grant execute permission for gradlew
+      working-directory: ./family_app_v2
+      run: chmod +x gradlew
+
     - name: Build APK (Auto Fallback)
-      run: |
-        # 自动进入代码文件夹
-        if [ -d "family_app_v2" ]; then
-          cd family_app_v2
-        fi
-        
-        # 如果有自带打包工具就用自带的，没有就用系统全局的 gradle 工具
-        if [ -f "gradlew" ]; then
-          chmod +x gradlew
-          ./gradlew assembleDebug
-        else
-          gradle assembleDebug
-        fi
+      working-directory: ./family_app_v2
+      run: ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: family-app-apk
-        # 无论打包到哪个极深的隐藏路径，直接全目录搜索 .apk 文件并提取
-        path: "**/app/build/outputs/apk/debug/*.apk"
+        name: app-debug
+        path: "family_app_v2/app/build/outputs/apk/debug/*.apk"
